@@ -1,6 +1,7 @@
 package com.test.demo.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.demo.exception.ProductNotFoundException;
 import com.test.demo.model.Product;
 import com.test.demo.model.dto.ProductDTO;
 import com.test.demo.repository.ProductRepository;
@@ -32,15 +33,15 @@ public class ProductService {
   }
 
   @Transactional
-  public ProductDTO updateProductPrice(String id, Double price) throws Exception {
-    Product product = productRepository.findById(id).orElseThrow(Exception::new);
+  public ProductDTO updateProductPrice(String id, Double price) {
+    Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     product.setPrice(price);
     return objectMapper.convertValue(productRepository.save(product), ProductDTO.class);
   }
 
   @Transactional
-  public ProductDTO updateProduct(String id, ProductDTO productDTO) throws Exception {
-    Product product = productRepository.findById(id).orElseThrow(Exception::new);
+  public ProductDTO updateProduct(String id, ProductDTO productDTO) {
+    Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     product.setName(productDTO.getName());
     product.setStock(productDTO.getStock());
     product.setPrice(productDTO.getPrice());
@@ -51,8 +52,8 @@ public class ProductService {
     productRepository.deleteById(id);
   }
 
-  public ProductDTO getProductById(String id) throws Exception {
-    Product product = productRepository.findById(id).orElseThrow(Exception::new);
+  public ProductDTO getProductById(String id) {
+    Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     return objectMapper.convertValue(product, ProductDTO.class);
   }
 
