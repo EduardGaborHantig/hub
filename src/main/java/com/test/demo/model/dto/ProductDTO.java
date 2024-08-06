@@ -1,6 +1,7 @@
 package com.test.demo.model.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class ProductDTO {
 
   private Integer stock;
 
-  @NotEmpty(message = "Price is mandatory")
+  @Positive(message = "Price must be a positive value")
   private Double price;
 
   private LocalDateTime createdDate;
