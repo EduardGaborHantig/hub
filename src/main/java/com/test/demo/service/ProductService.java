@@ -42,9 +42,9 @@ public class ProductService {
   @Transactional
   public ProductDTO updateProduct(String id, ProductDTO productDTO) {
     Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
-    product.setName(productDTO.getName());
-    product.setStock(productDTO.getStock());
-    product.setPrice(productDTO.getPrice());
+    product.setName(productDTO.name());
+    product.setStock(productDTO.stock());
+    product.setPrice(productDTO.price());
     return objectMapper.convertValue(productRepository.save(product), ProductDTO.class);
   }
 
