@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,5 +33,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ExceptionResponseModel> handleGlobalException(Exception ex) {
     return new ResponseEntity<>(new ExceptionResponseModel("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ExceptionResponseModel> handleAccessDeniedException(Exception ex) {
+    return new ResponseEntity<>(new ExceptionResponseModel("An unexpected error occurred: " + ex.getMessage(), HttpStatus.FORBIDDEN), HttpStatus.FORBIDDEN);
   }
 }
