@@ -1,6 +1,8 @@
 package com.test.demo.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.test.demo.exception.ProductNotFoundException;
 import com.test.demo.model.Product;
 import com.test.demo.model.dto.ProductDTO;
@@ -25,9 +27,11 @@ public class ProductService {
 
   private final ObjectMapper objectMapper;
 
-  public ProductService(ProductRepository productRepository, ObjectMapper objectMapper) {
+  public ProductService(ProductRepository productRepository) {
     this.productRepository = productRepository;
-    this.objectMapper = objectMapper;
+    this.objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
   }
 
   @Caching(evict = {
