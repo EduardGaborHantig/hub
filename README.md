@@ -1,4 +1,4 @@
-# NotesApp
+# HubApp
 ## Overview
 
 HubApp is a Spring Boot application that provides a RESTful API for managing products. It uses MongoDB as the database and includes Swagger for API documentation.
