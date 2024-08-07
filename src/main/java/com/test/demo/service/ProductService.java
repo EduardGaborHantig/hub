@@ -8,6 +8,10 @@ import com.test.demo.repository.ProductRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,12 +30,18 @@ public class ProductService {
     this.objectMapper = objectMapper;
   }
 
+  @Caching(evict = {
+      @CacheEvict(value = "products", allEntries = true),
+      @CacheEvict(value = "paginatedProducts", allEntries = true)
+  })
   public ProductDTO createProduct(ProductDTO productDTO) {
     Product product = objectMapper.convertValue(productDTO, Product.class);
     product.setCreatedDate(LocalDateTime.now());
     return objectMapper.convertValue(productRepository.save(product), ProductDTO.class);
   }
 
+  @CachePut(value = "products", key = "#id")
+  @CacheEvict(value = "paginatedProducts", allEntries = true)
   @Transactional
   public ProductDTO updateProductPrice(String id, Double price) {
     Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
@@ -39,6 +49,8 @@ public class ProductService {
     return objectMapper.convertValue(productRepository.save(product), ProductDTO.class);
   }
 
+  @CachePut(value = "products", key = "#id")
+  @CacheEvict(value = "paginatedProducts", allEntries = true)
   @Transactional
   public ProductDTO updateProduct(String id, ProductDTO productDTO) {
     Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
@@ -48,15 +60,21 @@ public class ProductService {
     return objectMapper.convertValue(productRepository.save(product), ProductDTO.class);
   }
 
+  @Caching(evict = {
+    @CacheEvict(value = "products", key = "#id"),
+    @CacheEvict(value = "paginatedProducts", allEntries = true)
+  })
   public void deleteProduct(String id) {
     productRepository.deleteById(id);
   }
 
+  @Cacheable(value = "products", key = "#id")
   public ProductDTO getProductById(String id) {
     Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
     return objectMapper.convertValue(product, ProductDTO.class);
   }
 
+  @Cacheable(value = "paginatedProducts")
   public Page<ProductDTO> getAllProducts(int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
     Page<Product> productPage = productRepository.findAll(pageable);
